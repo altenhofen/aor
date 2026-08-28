@@ -1,0 +1,52 @@
+name: Build and publish Arch repository
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/repository.yml'
+      - 'monochrome-bin/**'
+      - 'omarchy-windows-xp/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out sources
+        uses: actions/checkout@v4
+
+      - name: Build packages and repository database
+        run: |
+          docker run --rm \
+            --volume "$GITHUB_WORKSPACE:/repo" \
+            archlinux:latest \
+            bash -euxo pipefail -c '
+              pacman -Sy --noconfirm archlinux-keyring
+              pacman -S --noconfirm base-devel curl jq libarchive
+              useradd --create-home builder
+              chown -R builder:builder /repo
+
+              rm -f /repo/x86_64/*.pkg.tar.zst /repo/x86_64/*.pkg.tar.zst.sig
+              for package in /repo/monochrome-bin /repo/omarchy-windows-xp; do
+                runuser -u builder -- makepkg --clean --force --noconfirm --dir "$package"
+                cp "$package"/*.pkg.tar.zst /repo/x86_64/
+              done
+
+              cd /repo/x86_64
+              repo-add --remove altenhofen.db.tar.gz *.pkg.tar.zst
+              cp --remove-destination altenhofen.db.tar.gz altenhofen.db
+              cp --remove-destination altenhofen.files.tar.gz altenhofen.files
+              touch .nojekyll
+            '
+
+      - name: Publish repository to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./x86_64
+          force_orphan: true

@@ -9,7 +9,7 @@ Add this repository after the official repositories in `/etc/pacman.conf`:
 ```ini
 [altenhofen]
 SigLevel = Optional TrustAll
-Server = https://raw.githubusercontent.com/altenhofen/aor/master/$arch
+Server = https://altenhofen.github.io/aor/$arch
 ```
 
 Then refresh package databases:
@@ -23,4 +23,4 @@ sudo pacman -Sy
 - [`monochrome-bin`](monochrome-bin/): Desktop client for Monochrome music streaming.
 - [`omarchy-windows-xp`](omarchy-windows-xp/): Windows XP Docker VM launcher for Omarchy.
 
-Package source directories contain the corresponding `PKGBUILD` and `.SRCINFO` files. The repository database and built packages are published under `x86_64/`.
+Every push to `master` runs `.github/workflows/repository.yml`. GitHub Actions builds both packages in Arch Linux, regenerates the `altenhofen` repository database, and publishes `x86_64/` to the `gh-pages` branch. Enable GitHub Pages for the repository with `gh-pages` as its source.
