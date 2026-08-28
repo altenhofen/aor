@@ -27,7 +27,7 @@ jobs:
             archlinux:latest \
             bash -euxo pipefail -c '
               pacman -Sy --noconfirm archlinux-keyring
-              pacman -S --noconfirm base-devel bun curl dpkg jq libarchive rust
+              pacman -S --noconfirm base-devel bun curl dpkg git jq libarchive rust
               useradd --create-home builder
               chown -R builder:builder /repo
 
