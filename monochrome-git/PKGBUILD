@@ -1,7 +1,7 @@
 # Maintainer: Augusto Altenhofen
 pkgname=monochrome-git
 pkgver=r24.g3e4ec88
-pkgrel=1
+pkgrel=2
 pkgdesc='Desktop client for Monochrome music streaming (git)'
 arch=('x86_64')
 url='https://github.com/monochrome-music/desktop-app'
@@ -25,7 +25,7 @@ prepare() {
 
 build() {
     cd "$srcdir/desktop-app"
-    export RUSTFLAGS="${RUSTFLAGS//-fuse-ld=lld/-fuse-ld=bfd} -C link-arg=-fuse-ld=bfd"
+    export RUSTFLAGS="${RUSTFLAGS//-fuse-ld=lld/-fuse-ld=bfd} -C link-arg=-fuse-ld=bfd -l static=ring_core_0_17_14_"
     export LDFLAGS="${LDFLAGS//-fuse-ld=lld/-fuse-ld=bfd}"
     bun install --frozen-lockfile
     bun run tauri build --bundles deb

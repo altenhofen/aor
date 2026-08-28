@@ -1,7 +1,7 @@
 pkgbase = monochrome-git
 	pkgdesc = Desktop client for Monochrome music streaming (git)
 	pkgver = r24.g3e4ec88
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/monochrome-music/desktop-app
 	arch = x86_64
 	license = unknown
