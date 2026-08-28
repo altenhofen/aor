@@ -1,0 +1,20 @@
+pkgbase = monochrome-git
+	pkgdesc = Desktop client for Monochrome music streaming (git)
+	pkgver = r1.g3e4ec88
+	pkgrel = 1
+	url = https://github.com/monochrome-music/desktop-app
+	arch = x86_64
+	license = unknown
+	makedepends = bun
+	makedepends = rust
+	makedepends = dpkg
+	depends = libayatana-appindicator
+	depends = webkit2gtk-4.1
+	depends = gtk3
+	provides = monochrome
+	conflicts = monochrome
+	conflicts = monochrome-bin
+	source = desktop-app::git+https://github.com/monochrome-music/desktop-app.git#branch=main
+	b2sums = SKIP
+
+pkgname = monochrome-git

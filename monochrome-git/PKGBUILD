@@ -1,0 +1,35 @@
+# Maintainer: Augusto Altenhofen
+pkgname=monochrome-git
+pkgver=r24.g3e4ec88
+pkgrel=1
+pkgdesc='Desktop client for Monochrome music streaming (git)'
+arch=('x86_64')
+url='https://github.com/monochrome-music/desktop-app'
+license=('unknown')
+depends=('libayatana-appindicator' 'webkit2gtk-4.1' 'gtk3')
+makedepends=('bun' 'rust' 'dpkg')
+provides=('monochrome')
+conflicts=('monochrome' 'monochrome-bin')
+source=('desktop-app::git+https://github.com/monochrome-music/desktop-app.git#branch=main')
+b2sums=('SKIP')
+
+pkgver() {
+    cd "$srcdir/desktop-app"
+    printf 'r%s.g%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+    cd "$srcdir/desktop-app"
+    bun install --frozen-lockfile
+    bun run tauri build --bundles deb
+}
+
+package() {
+    local deb data_member
+    deb=("$srcdir/desktop-app/src-tauri/target/release/bundle/deb/"*.deb)
+    [[ -e ${deb[0]} ]] || { error 'Tauri build did not produce a Debian package'; return 1; }
+
+    data_member=$(ar t "${deb[0]}" | awk '/^data\.tar\./ { print; exit }')
+    [[ -n $data_member ]] || { error 'Debian archive has no data member'; return 1; }
+    ar p "${deb[0]}" "$data_member" | bsdtar -xpf - -C "$pkgdir"
+}
