@@ -6,6 +6,7 @@ pkgbase = monochrome-git
 	arch = x86_64
 	license = unknown
 	makedepends = bun
+	makedepends = clang
 	makedepends = dpkg
 	makedepends = node-gyp
 	makedepends = rust

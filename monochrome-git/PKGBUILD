@@ -7,7 +7,7 @@ arch=('x86_64')
 url='https://github.com/monochrome-music/desktop-app'
 license=('unknown')
 depends=('libayatana-appindicator' 'webkit2gtk-4.1' 'gtk3')
-makedepends=('bun' 'dpkg' 'node-gyp' 'rust')
+makedepends=('bun' 'clang' 'dpkg' 'node-gyp' 'rust')
 provides=('monochrome')
 conflicts=('monochrome' 'monochrome-bin')
 source=('desktop-app::git+https://github.com/monochrome-music/desktop-app.git#branch=main')
@@ -22,6 +22,12 @@ prepare() {
     cd "$srcdir/desktop-app"
     sed -i '/\.resizable(true)$/a\            .decorations(false)' src-tauri/src/lib.rs
     cargo update --manifest-path src-tauri/Cargo.toml -p ring --precise 0.17.13
+    mkdir -p src-tauri/.cargo
+    printf '%s\n' \
+        '[target.x86_64-unknown-linux-gnu]' \
+        'linker = "cc"' \
+        'rustflags = ["-C", "link-arg=-fuse-ld=bfd"]' \
+        > src-tauri/.cargo/config.toml
 }
 build() {
     cd "$srcdir/desktop-app"
