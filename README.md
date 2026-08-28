@@ -1,4 +1,4 @@
-# altenhofen's Arch Linux repository
+# altenhofen's own repository
 
 Personal Arch Linux repository containing packages maintained by Augusto Altenhofen.
 
@@ -20,7 +20,7 @@ sudo pacman -Sy
 
 ## Packages
 
-- [`monochrome-git`](monochrome-git/): Desktop client for Monochrome music streaming.
+- [`monochrome-bin`](monochrome-bin/): Desktop client for Monochrome music streaming.
 - [`omarchy-windows-xp`](omarchy-windows-xp/): Windows XP Docker VM launcher for Omarchy.
 
 Package source directories contain the corresponding `PKGBUILD` and `.SRCINFO` files. The repository database and built packages are published under `x86_64/`.

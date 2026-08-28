@@ -1,6 +1,6 @@
-# Maintainer: monochrome package maintainers
+# Maintainer: Augusto Altenhofen
 
-pkgname=monochrome-git
+pkgname=monochrome-bin
 pkgver=2.0.9
 pkgrel=1
 pkgdesc='Desktop client for Monochrome music streaming'

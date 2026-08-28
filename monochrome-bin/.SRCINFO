@@ -1,4 +1,4 @@
-pkgbase = monochrome-git
+pkgbase = monochrome-bin
 	pkgdesc = Desktop client for Monochrome music streaming
 	pkgver = 2.0.9
 	pkgrel = 1
@@ -14,4 +14,4 @@ pkgbase = monochrome-git
 	source = release.json::https://api.github.com/repos/monochrome-music/desktop-app/releases/latest
 	sha256sums = SKIP
 
-pkgname = monochrome-git
+pkgname = monochrome-bin
