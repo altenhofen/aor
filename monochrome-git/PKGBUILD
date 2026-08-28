@@ -1,7 +1,7 @@
 # Maintainer: Augusto Altenhofen
 pkgname=monochrome-git
 pkgver=r24.g3e4ec88
-pkgrel=2
+pkgrel=3
 pkgdesc='Desktop client for Monochrome music streaming (git)'
 arch=('x86_64')
 url='https://github.com/monochrome-music/desktop-app'
@@ -21,11 +21,11 @@ pkgver() {
 prepare() {
     cd "$srcdir/desktop-app"
     sed -i '/\.resizable(true)$/a\            .decorations(false)' src-tauri/src/lib.rs
+    cargo update --manifest-path src-tauri/Cargo.toml -p ring --precise 0.17.13
 }
-
 build() {
     cd "$srcdir/desktop-app"
-    export RUSTFLAGS="${RUSTFLAGS//-fuse-ld=lld/-fuse-ld=bfd} -C link-arg=-fuse-ld=bfd -l static=ring_core_0_17_14_"
+    export RUSTFLAGS="${RUSTFLAGS//-fuse-ld=lld/-fuse-ld=bfd} -C link-arg=-fuse-ld=bfd"
     export LDFLAGS="${LDFLAGS//-fuse-ld=lld/-fuse-ld=bfd}"
     bun install --frozen-lockfile
     bun run tauri build --bundles deb
