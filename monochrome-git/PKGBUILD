@@ -18,6 +18,11 @@ pkgver() {
     printf 'r%s.g%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
+prepare() {
+    cd "$srcdir/desktop-app"
+    sed -i '/\.resizable(true)$/a\            .decorations(false)' src-tauri/src/lib.rs
+}
+
 build() {
     cd "$srcdir/desktop-app"
     bun install --frozen-lockfile
