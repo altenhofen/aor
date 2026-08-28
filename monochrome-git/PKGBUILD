@@ -21,17 +21,12 @@ pkgver() {
 prepare() {
     cd "$srcdir/desktop-app"
     sed -i '/\.resizable(true)$/a\            .decorations(false)' src-tauri/src/lib.rs
-
-    mkdir -p .cargo
-    printf '%s\n' \
-        '[target.x86_64-unknown-linux-gnu]' \
-        'linker = "cc"' \
-        'rustflags = ["-C", "link-arg=-fuse-ld=bfd"]' \
-        > .cargo/config.toml
 }
 
 build() {
     cd "$srcdir/desktop-app"
+    export RUSTFLAGS="${RUSTFLAGS//-fuse-ld=lld/-fuse-ld=bfd} -C link-arg=-fuse-ld=bfd"
+    export LDFLAGS="${LDFLAGS//-fuse-ld=lld/-fuse-ld=bfd}"
     bun install --frozen-lockfile
     bun run tauri build --bundles deb
 }
