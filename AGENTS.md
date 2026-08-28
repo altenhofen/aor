@@ -84,16 +84,30 @@ This is an application-level issue, not an Arch dependency or desktop-entry issu
 
 ## GitHub Pages repository build
 
-`.github/workflows/repository.yml` builds and publishes the Arch repository. It triggers on pushes to `master` when any of these paths change:
+`.github/workflows/repository.yml` builds and publishes the binary Arch repository. It triggers on pushes to `master` when any of these paths change:
 
 - `.github/workflows/repository.yml`
 - `monochrome-bin/**`
-- `monochrome-git/**`
 - `omarchy-windows-xp/**`
 
-The workflow builds all package directories listed in its `for package in ...` loop, regenerates the repository database, and publishes `site/` to the `gh-pages` branch.
+The workflow builds only the package directories listed in its `for package in ...` loop, regenerates the repository database, and publishes `site/` to the `gh-pages` branch.
 
-A normal push to `master` triggers the workflow. To run it manually:
+`monochrome-git` is intentionally not built by GitHub Actions. It is an AUR-style source package: users clone this repository and build it locally:
+
+```bash
+git clone https://github.com/altenhofen/aor.git
+cd aor/monochrome-git
+makepkg -si
+```
+
+To update it:
+
+```bash
+git pull
+makepkg -si
+```
+
+A normal push to `master` triggers the binary repository workflow. To run it manually:
 
 ```bash
 gh workflow run repository.yml --ref master
