@@ -39,42 +39,6 @@ Use existing package recipes as the convention. Keep runtime dependencies in `de
 
 Do not add application behavior to this recipe. The application is embedded in the upstream Tauri binary.
 
-### `monochrome-git`
-
-`monochrome-git` builds the upstream `main` branch:
-
-- Source: `https://github.com/monochrome-music/desktop-app.git`
-- Build tools: `bun`, `rust`, and `dpkg`
-- Runtime dependencies: `libayatana-appindicator`, `webkit2gtk-4.1`, and `gtk3`
-- Build sequence: `bun install --frozen-lockfile`, then `bun run tauri build --bundles deb`
-- Package output: the generated Tauri Debian bundle under `src-tauri/target/release/bundle/deb/`
-
-The generated Debian archive must be unpacked by extracting its `data.tar.*` member; a Debian package is an `ar` archive and cannot be passed directly to `bsdtar` as the package payload.
-
-The package uses a git-style version generated from the source checkout:
-
-```bash
-printf 'r%s.g%s' "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
-```
-
-`monochrome-git` conflicts with `monochrome-bin`. Do not install both simultaneously.
-
-## Downstream source patches
-
-When a downstream patch is necessary, apply it in `prepare()` after the git source is checked out and before `build()` runs. Keep the patch narrow and anchored to stable upstream source.
-
-The current Monochrome window-decoration patch is:
-
-```bash
-prepare() {
-    cd "$srcdir/desktop-app"
-    sed -i '/\.resizable(true)$/a\            .decorations(false)' src-tauri/src/lib.rs
-}
-```
-
-`.decorations(false)` removes the native titlebar and border. It may also remove the normal window drag area if the application does not provide a custom draggable region.
-
-Do not patch the installed Tauri ELF after packaging. The frontend and Rust code are embedded in the built application, so behavior changes should be made in the source build or upstream.
 
 ## Last.fm popup issue
 
@@ -90,22 +54,7 @@ This is an application-level issue, not an Arch dependency or desktop-entry issu
 - `monochrome-bin/**`
 - `omarchy-windows-xp/**`
 
-The workflow builds only the package directories listed in its `for package in ...` loop, regenerates the repository database, and publishes `site/` to the `gh-pages` branch.
-
-`monochrome-git` is intentionally not built by GitHub Actions. It is an AUR-style source package: users clone this repository and build it locally:
-
-```bash
-git clone https://github.com/altenhofen/aor.git
-cd aor/monochrome-git
-makepkg -si
-```
-
-To update it:
-
-```bash
-git pull
-makepkg -si
-```
+The workflow builds `monochrome-bin` and `omarchy-windows-xp`, regenerates the repository database, and publishes `site/` to the `gh-pages` branch.
 
 A normal push to `master` triggers the binary repository workflow. To run it manually:
 
