@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/repository.yml'
       - 'monochrome-bin/**'
+      - 'monochrome-git/**'
       - 'omarchy-windows-xp/**'
   workflow_dispatch:
 
@@ -26,12 +27,12 @@ jobs:
             archlinux:latest \
             bash -euxo pipefail -c '
               pacman -Sy --noconfirm archlinux-keyring
-              pacman -S --noconfirm base-devel curl jq libarchive
+              pacman -S --noconfirm base-devel bun curl dpkg jq libarchive rust
               useradd --create-home builder
               chown -R builder:builder /repo
 
               rm -f /repo/x86_64/*.pkg.tar.zst /repo/x86_64/*.pkg.tar.zst.sig
-              for package in /repo/monochrome-bin /repo/omarchy-windows-xp; do
+              for package in /repo/monochrome-bin /repo/monochrome-git /repo/omarchy-windows-xp; do
                 runuser -u builder -- makepkg --clean --force --nodeps --noconfirm --dir "$package"
                 cp "$package"/*.pkg.tar.zst /repo/x86_64/
               done
