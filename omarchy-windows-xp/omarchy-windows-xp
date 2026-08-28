@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+# omarchy:group=windows
+# omarchy:name=xp
+# omarchy:summary=Launch and manage the Windows XP Docker VM
+# omarchy:args=<launch|stop|restart|status|logs|config>
+set -Eeuo pipefail
+
+APP_DIR="${OMARCHY_WINDOWS_XP_DIR:-$HOME/WindowsXP}"
+COMPOSE_FILE="$APP_DIR/compose.yaml"
+TEMPLATE="/usr/share/omarchy-windows-xp/compose.yaml"
+RDP_PORT="${RDP_PORT:-3390}"
+RDP_HOST="127.0.0.1:${RDP_PORT}"
+WIN_USER="${XP_USERNAME:-Docker}"
+WIN_PASS="${XP_PASSWORD:-admin}"
+export RDP_PORT WEB_PORT RAM_SIZE CPU_CORES DISK_SIZE
+
+compose() { docker compose -f "$COMPOSE_FILE" "$@"; }
+
+ensure_config() {
+  mkdir -p "$APP_DIR/windows"
+  if [[ ! -e "$COMPOSE_FILE" ]]; then
+    install -m 0644 "$TEMPLATE" "$COMPOSE_FILE"
+  fi
+}
+
+launch() {
+  ensure_config
+  compose up -d
+
+  for _ in {1..120}; do
+    if (echo >/dev/tcp/127.0.0.1/"$RDP_PORT") 2>/dev/null; then
+      break
+    fi
+    sleep 1
+  done
+
+  if ! (echo >/dev/tcp/127.0.0.1/"$RDP_PORT") 2>/dev/null; then
+    notify-send "Windows XP" "RDP is not ready. Check: $APP_DIR/compose.yaml logs" || true
+    return 1
+  fi
+
+  # The port can accept TCP before the legacy XP guest has completed booting.
+  sleep 15
+
+  set +e
+  xfreerdp3 \
+    /u:"$WIN_USER" \
+    /p:"$WIN_PASS" \
+    /v:"$RDP_HOST" \
+    /grab-keyboard \
+    /sound \
+    /microphone \
+    /clipboard \
+    /cert:ignore \
+    /title:"Windows XP - Omarchy" \
+    /dynamic-resolution \
+    /gfx:AVC444 \
+    /floatbar:sticky:off,default:visible,show:fullscreen
+  status=$?
+  set -e
+
+  compose stop
+  return "$status"
+}
+
+ensure_config
+case "${1:-launch}" in
+  launch|start) launch ;;
+  stop) compose stop ;;
+  restart) compose restart ;;
+  status) compose ps ;;
+  logs) shift; compose logs "$@" ;;
+  config) printf '%s\n' "$COMPOSE_FILE" ;;
+  help|-h|--help)
+    printf '%s\n' \
+      'Usage: omarchy-windows-xp [launch|stop|restart|status|logs|config]' \
+      '  launch, start  Start XP and connect using xfreerdp3' \
+      '  stop           Stop the XP container' \
+      '  restart        Restart the XP container' \
+      '  status         Show container status' \
+      '  logs           Show container logs' \
+      '  config         Print the per-user Compose path'
+    ;;
+  *)
+    printf 'Unknown command: %s\n' "$1" >&2
+    exit 2
+    ;;
+esac

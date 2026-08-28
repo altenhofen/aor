@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Windows XP
+Comment=Start Windows XP in Docker and connect with RDP
+Exec=uwsm app -- omarchy-windows-xp launch
+Icon=windows
+Terminal=false
+Type=Application
+Categories=System;Utility;
+Keywords=Windows;XP;Docker;RDP;

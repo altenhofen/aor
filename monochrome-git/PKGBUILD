@@ -1,0 +1,43 @@
+# Maintainer: monochrome package maintainers
+
+pkgname=monochrome-git
+pkgver=2.0.9
+pkgrel=1
+pkgdesc='Desktop client for Monochrome music streaming'
+arch=('x86_64')
+url='https://github.com/monochrome-music/desktop-app'
+license=('unknown')
+depends=('libayatana-appindicator' 'webkit2gtk-4.1' 'gtk3')
+makedepends=('curl' 'jq' 'libarchive')
+source=('release.json::https://api.github.com/repos/monochrome-music/desktop-app/releases/latest')
+sha256sums=('SKIP')
+
+pkgver() {
+    jq -er '.tag_name | ltrimstr("v")' release.json
+}
+
+prepare() {
+    local version tag deb_url sig_url
+    curl --fail --location --retry 3 \
+        --output release.json \
+        'https://api.github.com/repos/monochrome-music/desktop-app/releases/latest'
+
+    tag=$(jq -er '.tag_name | select(test("^v?[0-9]+\\.[0-9]+\\.[0-9]+([.-][0-9A-Za-z.-]+)?$"))' release.json)
+    version=${tag#v}
+    deb_url=$(jq -er --arg name "Monochrome.Desktop_${version}_amd64.deb" \
+        '.assets[] | select(.name == $name) | .browser_download_url' release.json)
+    sig_url=$(jq -er --arg name "Monochrome.Desktop_${version}_amd64.deb.sig" \
+        '.assets[] | select(.name == $name) | .browser_download_url' release.json)
+
+    curl --fail --location --retry 3 --output "Monochrome.Desktop_${version}_amd64.deb" "$deb_url"
+    curl --fail --location --retry 3 --output "Monochrome.Desktop_${version}_amd64.deb.sig" "$sig_url"
+}
+
+package() {
+    local deb data_member
+    deb=("$srcdir"/Monochrome.Desktop_*_amd64.deb)
+    data_member=$(ar t "${deb[0]}" | awk '/^data\.tar\./ { print; exit }')
+
+    [[ -n $data_member ]] || { error 'Debian archive has no data member'; return 1; }
+    ar p "${deb[0]}" "$data_member" | bsdtar -xpf - -C "$pkgdir"
+}

@@ -1,0 +1,21 @@
+pkgbase = omarchy-windows-xp
+	pkgdesc = Windows XP Docker VM launcher for Omarchy
+	pkgver = 1.0.0
+	pkgrel = 1
+	url = https://github.com/dockur/windows
+	arch = x86_64
+	license = MIT
+	depends = bash
+	depends = docker
+	depends = docker-compose
+	depends = freerdp
+	depends = libnotify
+	depends = uwsm
+	source = omarchy-windows-xp
+	source = compose.yaml
+	source = windows-xp.desktop
+	sha256sums = 209a572da0006935d52fc126e52520fd362a400baa9720b916091c4150a2122a
+	sha256sums = 4c664794936bf63cf6c040d7097a2d983270d676ba3195cb3547070ea9bfc38b
+	sha256sums = 57abcee2852fd83764bc49a125ec80a8fe28e80079796032036adc43ab447caf
+
+pkgname = omarchy-windows-xp

@@ -1,0 +1,17 @@
+# Maintainer: Augusto Altenhofen
+pkgname=omarchy-windows-xp
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Windows XP Docker VM launcher for Omarchy'
+arch=('x86_64')
+url='https://github.com/dockur/windows'
+license=('MIT')
+depends=('bash' 'docker' 'docker-compose' 'freerdp' 'libnotify' 'uwsm')
+source=('omarchy-windows-xp' 'compose.yaml' 'windows-xp.desktop')
+sha256sums=('209a572da0006935d52fc126e52520fd362a400baa9720b916091c4150a2122a' '4c664794936bf63cf6c040d7097a2d983270d676ba3195cb3547070ea9bfc38b' '57abcee2852fd83764bc49a125ec80a8fe28e80079796032036adc43ab447caf')
+
+package() {
+  install -Dm755 omarchy-windows-xp "$pkgdir/usr/bin/omarchy-windows-xp"
+  install -Dm644 compose.yaml "$pkgdir/usr/share/omarchy-windows-xp/compose.yaml"
+  install -Dm644 windows-xp.desktop "$pkgdir/usr/share/applications/windows-xp.desktop"
+}

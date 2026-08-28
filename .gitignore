@@ -1,0 +1,8 @@
+# Local makepkg working directories
+*/src/
+*/pkg/
+*/release.json
+
+# Temporary package signatures downloaded during builds
+*.deb
+*.deb.sig

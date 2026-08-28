@@ -1,0 +1,8 @@
+# makepkg output
+/pkg/
+/src/
+*.pkg.tar.zst
+*.pkg.tar.zst.sig
+
+# Local VM data if this checkout is used as storage
+/windows/

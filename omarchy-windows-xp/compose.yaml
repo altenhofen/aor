@@ -1,0 +1,25 @@
+services:
+  windows-xp:
+    image: dockurr/windows:latest
+    container_name: windows-xp
+    environment:
+      VERSION: "xp"
+      RAM_SIZE: "${RAM_SIZE:-2G}"
+      CPU_CORES: "${CPU_CORES:-2}"
+      DISK_SIZE: "${DISK_SIZE:-64G}"
+    devices:
+      - /dev/kvm
+      - /dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8007}:8006"
+      - "127.0.0.1:${RDP_PORT:-3390}:3389/tcp"
+      - "127.0.0.1:${RDP_PORT:-3390}:3389/udp"
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    volumes:
+      - ./windows:/storage
+    restart: unless-stopped
+    stop_grace_period: 2m
