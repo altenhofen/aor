@@ -1,6 +1,8 @@
 # altenhofen's own repository
 
-Personal Arch Linux repository containing packages maintained by Augusto Altenhofen.
+Personal Arch Linux repository containing packages for my personal use.
+
+Maintained by Augusto Altenhofen.
 
 ## Enable the repository
 
@@ -22,5 +24,3 @@ sudo pacman -Sy
 
 - [`monochrome-bin`](monochrome-bin/): Desktop client for Monochrome music streaming.
 - [`omarchy-windows-xp`](omarchy-windows-xp/): Windows XP Docker VM launcher for Omarchy.
-
-Every push to `master` runs `.github/workflows/repository.yml`. GitHub Actions builds both packages in Arch Linux, regenerates the `altenhofen` repository database, and publishes `x86_64/` to the `gh-pages` branch. Enable GitHub Pages for the repository with `gh-pages` as its source.
